@@ -1,0 +1,101 @@
+################################
+# Unofficial Clash Wiki
+# @see https://lancellc.gitbook.io/clash/
+#
+# GitHub Clash Project
+# @see https://github.com/Dreamacro/clash
+################################
+
+
+# Port of HTTP(S) proxy server on the local end
+port: 7890
+
+# HTTP(S) and SOCKS5 server on the same port
+# mixed-port: 7890
+
+# Port of SOCKS5 proxy server on the local end
+socks-port: 7891
+
+# Transparent proxy server port for Linux and macOS (Redirect TCP and TProxy UDP)
+redir-port: 7892
+
+# Transparent proxy server port for Linux (TProxy TCP and TProxy UDP)
+tproxy-port: 7893
+
+
+# rule / global / direct / script (default is rule)
+mode: rule
+
+# allow other devices access
+allow-lan: true
+
+# silent / error / warning / info / debug
+log-level: info
+
+
+# External Controller can control clash from outside with REST-ful API for clash
+external-controller: "0.0.0.0:9090"
+
+# Secret for REST-ful API (Optional)
+secret: ""
+
+
+# DNS server settings
+# This section is optional. When not present, the DNS server will be disabled.
+dns:
+  enable: true
+  listen: "0.0.0.0:1053"
+  enhanced-mode: redir-host
+  # Hostnames in this list will not be resolved with fake IPs
+  # i.e. questions to these domain names will always be answered with their real IP addresses
+  # fake-ip-filter:
+  #   - '*.lan'
+  #   - localhost.ptlogin2.qq.com
+  #
+  # Supports UDP, TCP, DoT, DoH. You can specify the port to connect to.
+  # All DNS questions are sent directly to the nameserver, without proxies involved. Clash answers the DNS question with the first result gathered.
+  nameserver:
+    - "114.114.114.114"
+    - "223.5.5.5"
+  # When `fallback` is present, the DNS server will send concurrent requests to the servers in this section along with servers in `nameservers`.
+  # The answers from fallback servers are used when the GEOIP country is not `CN`.
+  fallback:
+    - "tls://1.1.1.1:853"
+    - "tls://dns.google:853"
+    - "tcp://1.1.1.1:53"
+    - "tcp://208.67.222.222:443"
+
+
+# Use TUN mode to take over global traffic
+tun:
+  enable: true
+  stack: system
+  # Automatic set global routing on macOS/Windows/Linux.
+  # auto-route start support on Linux from Premium 2022.04.10
+  auto-route: true
+  # Automatic choose traffic exits interface on macOS/Windows/Linux.
+  # auto-detect-interface start support on Linux from Premium 2022.04.10
+  auto-detect-interface: true
+
+
+
+################################
+# SET PROXIES AND RULES
+################################
+proxies:
+  - name: "example"
+    type: socks5
+    server: server
+    port: 443
+
+rules:
+  - DOMAIN-SUFFIX,google.com,auto
+  - DOMAIN-KEYWORD,google,auto
+  - DOMAIN,google.com,auto
+  - DOMAIN-SUFFIX,ad.com,REJECT
+  - SRC-IP-CIDR,192.168.1.201/32,DIRECT
+  - IP-CIDR,127.0.0.0/8,DIRECT
+  - GEOIP,CN,DIRECT
+  - DST-PORT,80,DIRECT
+  - SRC-PORT,7777,DIRECT
+  - MATCH,auto

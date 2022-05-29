@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+  clash-dashboard:
+    image: haishanh/yacd:v0.3.5
+    ports:
+      - "4096:80"
+    restart: unless-stopped
+    container_name: clash-dashboard
+
+  # Treat the host as a transparent gateway.
+  # Should set router(iptables) manually.
+  clash-service:
+    image: dreamacro/clash-premium:2022.05.18
+    privileged: true
+    # When your system is Linux, you can use `network_mode: "host"` directly.
+    network_mode: bridge
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    volumes:
+      - ./config.yaml:/root/.config/clash/config.yaml
+    ports:
+      - "9090:9090"
+      - "7890:7890"
+      - "7891:7891"
+      - "7892:7892"
+      - "1053:1053/udp"
+      - "1053:1053/tcp"
+    restart: unless-stopped
+    container_name: clash-service
