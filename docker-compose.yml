@@ -3,6 +3,7 @@ version: "3"
 services:
   clash-dashboard:
     image: haishanh/yacd:v0.3.5
+    network_mode: bridge
     ports:
       - "4096:80"
     restart: unless-stopped
